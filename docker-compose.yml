@@ -3,16 +3,19 @@
 # Dev packages:     typescript, ts-node, nodemon, rimraf, @types/*
 #
 # Usage:
-#   Production: docker compose up --build -d
-#   Dev mode:   uncomment 'command' and the two dev volume lines below
+#   Dev mode:   docker compose up --build
+#   Production: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: dev
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+      - DOTENV_DEBUG=true
       - PORT=3000
       - DB_PATH=/app/data/currency.db
       # Add API keys here or via .env file:
@@ -21,11 +24,9 @@ services:
       # - CURRENCY_API_KEY=<your_key>
     volumes:
       - sqlite_data:/app/data
-      # In Dev mode — uncomment these two lines:
       - ./src:/app/src
       - ./tsconfig.json:/app/tsconfig.json
     restart: unless-stopped
-    # Dev mode — uncomment this line:
     command: npm run dev
 
 volumes:

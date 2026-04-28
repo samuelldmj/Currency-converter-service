@@ -1,0 +1,17 @@
+# docker-compose.prod.yml — production overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sqlite_data:/app/data
+      # src and tsconfig mounts removed — production runs compiled dist/
+    command: npm start
+
+volumes:
+  sqlite_data:

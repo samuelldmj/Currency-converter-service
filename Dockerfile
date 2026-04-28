@@ -5,8 +5,8 @@
 # Uses node:20-slim (Debian-based) — has python3/make/g++ pre-installed,
 # avoiding the slow apk build-tools install required by better-sqlite3.
 
-# Build stage
-FROM node:20-slim AS builder
+# Dev stage
+FROM node:20-slim AS dev
 
 WORKDIR /app
 
@@ -15,6 +15,13 @@ RUN npm ci
 
 COPY src ./src
 COPY tsconfig.json ./
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
+
+# Build stage
+FROM dev AS builder
 
 RUN npm run build
 
