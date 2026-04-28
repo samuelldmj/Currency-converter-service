@@ -1,0 +1,6 @@
+todo.md
+.env.local
+node_modules
+.amazonq
+.env.development.local
+docs

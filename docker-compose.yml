@@ -1,0 +1,32 @@
+# docker-compose.yml for Currency Converter Service
+# Runtime packages: express, cors, better-sqlite3, dotenv
+# Dev packages:     typescript, ts-node, nodemon, rimraf, @types/*
+#
+# Usage:
+#   Production: docker compose up --build -d
+#   Dev mode:   uncomment 'command' and the two dev volume lines below
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data/currency.db
+      # Add API keys here or via .env file:
+      # - FIXER_API_KEY=<your_key>
+      # - OPEN_EXCHANGE_APP_ID=<your_key>
+      # - CURRENCY_API_KEY=<your_key>
+    volumes:
+      - sqlite_data:/app/data
+      # In Dev mode — uncomment these two lines:
+      - ./src:/app/src
+      - ./tsconfig.json:/app/tsconfig.json
+    restart: unless-stopped
+    # Dev mode — uncomment this line:
+    command: npm run dev
+
+volumes:
+  sqlite_data:
