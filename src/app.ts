@@ -40,6 +40,9 @@ app.use(express.json());
 
 // MOUNT router at /api/v1
 // app.use("/api/v1", router);
+app.get("/", (req, res) => {
+    res.send("Api is working!");
+});
 
 // ATTACH errorHandler middleware (must be last, after all routes)
 // app.use(errorHandler);

@@ -2,7 +2,7 @@ import { config } from "dotenv";
 
 const envPath: string = `.env.${process.env.NODE_ENV || "development"}.local`;
 
-config({ path: envPath });
+config({ path: envPath, debug: process.env.DOTENV_DEBUG === "true" });
 
 export const {
     PORT,
