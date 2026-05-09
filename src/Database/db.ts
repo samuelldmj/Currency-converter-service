@@ -3,12 +3,12 @@ import Database from "better-sqlite3";
 
 // IMPORT DB_PATH from Config/env.ts
 import { DB_PATH } from "../Config/env.js";
-// CREATE db instance using DB_PATH
-const db = new Database(DB_PATH);
-//   IF DB_PATH is undefined, throw error "DB_PATH is not set"
+// GUARD: check DB_PATH before creating instance
 if (!DB_PATH) {
     throw new Error("DB_PATH is not set");
 }
+// CREATE db instance using DB_PATH
+const db = new Database(DB_PATH);
 db.pragma("foreign_keys = ON");
 export function initializeDb() {
   db.exec(`

@@ -1,5 +1,4 @@
 
-// IMPORT express, cors
 import express from "express";
 import cors from "cors";
 import { ALLOWED_ORIGINS } from "./Config/env.js";
@@ -11,8 +10,6 @@ import { ALLOWED_ORIGINS } from "./Config/env.js";
 const app = express();
 
 // ATTACH cors middleware
-// FIX: use explicit allowlist array, NOT a dynamic env var directly in origin
-//   DEFINE allowedOrigins = [SERVER_URL from env, "http://localhost:3000"]
 //   SET origin to a function that checks req origin against allowedOrigins
 // FIX 1: store the parsed array so it can be used in the callback
 // DEFINE originList = ALLOWED_ORIGINS?.split(',') ?? []
@@ -35,7 +32,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ATTACH express.json() middleware
+
 app.use(express.json());
 
 // MOUNT router at /api/v1
