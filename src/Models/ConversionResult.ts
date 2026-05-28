@@ -8,7 +8,7 @@ interface ConversionResult {
   timestamp: string;
 }
 
-export { ConversionResult };
+export default ConversionResult ;
 
 
 

@@ -7,7 +7,7 @@ interface ExchangeRate {
   source?: string;
 }
 
-export { ExchangeRate };
+export default ExchangeRate ;
 
 
 
