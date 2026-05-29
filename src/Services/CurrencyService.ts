@@ -1,6 +1,7 @@
 import ConversionResult from "../Models/ConversionResult.js";
 import CacheRepository from "../Repositories/CacheRepository.js";
 import RateRepository from "../Repositories/RateRepository.js";
+import AppError from "../Utils/AppError.js";
 import RateAggregatorService from "./RateAggregatorService.js";
 
 
@@ -44,7 +45,10 @@ export class CurrencyService {
 
                 source = rate.source || 'api';
             } else {
-                 throw new Error("Unable to fetch exchange rate");
+                  throw new AppError(
+            "Unable to fetch exchange rate",
+            503
+        );
             }
             
         }
