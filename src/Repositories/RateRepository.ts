@@ -1,6 +1,6 @@
 
 import db from "../Database/db.js";
-import { ExchangeRate } from "../Models/ExchangeRate.js";
+import  ExchangeRate  from "../Models/ExchangeRate.js";
 
 
 class RateRepository {

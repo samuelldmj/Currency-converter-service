@@ -1,4 +1,4 @@
-import { ExchangeRate } from "../Models/ExchangeRate.js";
+import ExchangeRate  from "../Models/ExchangeRate.js";
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
