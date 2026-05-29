@@ -96,7 +96,7 @@ export default ExternalApiService;
 
 
 
-
+//PSUEDOCODE
 // IMPORT env keys from Config/env.ts
 // IMPORT ExchangeRate and ApiResponse types
 
@@ -115,3 +115,72 @@ export default ExternalApiService;
 //     CALL each provider in parallel or sequentially
 //     RETURN array of responses
 // EXPORT default ExternalApiService
+
+//OUTPUT STRUCTURE
+/*
+
+--------> BEFORE .MAP METHOD PROMISE.ALLSETTLED();   
+[
+  {
+    status: "fulfilled",
+    value: {
+      success: true,
+      data: {...},
+      source: "currencyapi"
+    }
+  },
+
+  {
+    status: "rejected",
+    reason: Error("Invalid API key")
+  },
+
+  {
+    status: "fulfilled",
+    value: {
+      success: true,
+      data: {...},
+      source: "openexchange"
+    }
+  }
+]
+
+
+---------------> AFTER .MAP
+[
+  {
+    success: true,
+    data: {
+      base: "USD",
+      target: "EUR",
+      rate: 0.92
+    },
+    source: "currencyapi"
+  },
+
+  {
+    success: false,
+    data: {
+      base: "USD",
+      target: "EUR",
+      rate: 0
+    },
+    source: "fixer",
+    error: "Invalid API key"
+  },
+
+  {
+    success: true,
+    data: {
+      base: "USD",
+      target: "EUR",
+      rate: 0.93
+    },
+    source: "openexchange"
+  }
+]
+
+
+
+*/
+
