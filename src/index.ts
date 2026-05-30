@@ -1,8 +1,6 @@
 
 import { PORT, SERVER_URL } from "./Config/env.js";
-
 import app from "./app.js";
-
 import { initializeDb } from "./Database/db.js";
 
 initializeDb();
