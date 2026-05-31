@@ -15,6 +15,7 @@ RUN npm ci
 
 COPY src ./src
 COPY tsconfig.json ./
+COPY .env.* ./
 
 EXPOSE 3000
 
