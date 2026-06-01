@@ -42,8 +42,8 @@ class CurrencyController {
 
     async getSupportedCurrencies(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const currencies = await this.currencyService.getSupportedCurrencies();
-            res.json({ success: true, data: currencies });
+            const {currencies, sources} = await this.currencyService.getSupportedCurrencies();
+            res.json({ success: true, data: currencies, sources });
         } catch (error) {
             next(error);
         }
