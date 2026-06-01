@@ -66,6 +66,52 @@ class ExternalApiService {
         }
     }
 
+    async fetchCurrenciesFromFixer(): Promise<string[]> {
+    const response = await fetch(
+        `http://data.fixer.io/api/currencies?access_key=${FIXER_API_KEY}`
+    );
+
+    const data = await response.json();
+
+    const currencies = data?.currencies;
+
+    if (!currencies || typeof currencies !== "object") {
+        return [];
+    }
+
+    return Object.keys(currencies);
+}
+
+
+    async fetchCurrenciesFromOpenExchange(): Promise<string[]> {
+        const response = await fetch(`https://openexchangerates.org/api/currencies.json?app_id=${OPEN_EXCHANGE_APP_ID}`);
+        const data = await response.json();
+        return Object.keys(data);
+    }
+
+    async fetchCurrenciesFromCurrencyApi(): Promise<string[]> {
+        const response = await fetch(`https://api.currencyapi.com/v3/currencies?apikey=${CURRENCY_API_KEY}`);
+        const data = await response.json();
+        return Object.keys(data.data);
+    }
+
+    async fetchAllCurrencies(): Promise<string[]> {
+        const results = await Promise.allSettled([
+            this.fetchCurrenciesFromFixer(),
+            this.fetchCurrenciesFromOpenExchange(),
+            this.fetchCurrenciesFromCurrencyApi()
+        ]);
+
+        const allCurrencies = new Set<string>();
+        results.forEach(result => {
+            if (result.status === 'fulfilled' && result.value) {
+                result.value.forEach(c => allCurrencies.add(c));
+            }
+        });
+
+        return Array.from(allCurrencies).sort();
+    }
+
 
     async fetchAllRates(base: string, target: string): Promise<ApiResponse<ExchangeRate>[]> {
         const results = await Promise.allSettled([
@@ -92,7 +138,19 @@ class ExternalApiService {
         })
 
     }
+
 }
+
+export default ExternalApiService;
+
+
+
+
+
+
+
+
+
 
 // PSEUDOCODE
 // OUTPUT STRUCTURE
@@ -159,5 +217,3 @@ class ExternalApiService {
 ]
 
 */
-
-export default ExternalApiService;
