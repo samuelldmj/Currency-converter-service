@@ -10,6 +10,7 @@ interface CacheEntry {
 class CacheRepository {
     private store: Map<string, CacheEntry> = new Map();
     private currenciesList: string[] | undefined;
+    private currenciesSources: string[] | undefined;
 
     private buildKey(base: string, target: string): string {
       return `${base}_${target}`;
@@ -38,22 +39,27 @@ set(rate: ExchangeRate): void{
         this.store.delete(key);
     }
 
-    setCurrencies(currencies: string[]): void {
+    setCurrencies(currencies: string[], sources: string[]): void {
         this.store.set('currencies', { 
             rate: { base: '', target: '', rate: 0 }, 
             expiresAt: Date.now() + CACHE_TTL_MS 
         });
         this.currenciesList = currencies;
+        this.currenciesSources = sources;
     }
 
-    getCurrencies(): string[] | undefined {
+    getCurrencies(): {currencies: string[], sources: string[]} | undefined {
         const entry = this.store.get('currencies');
         if (!entry || Date.now() > entry.expiresAt) {
             this.store.delete('currencies');
             this.currenciesList = undefined;
+            this.currenciesSources = undefined;
             return undefined;
         }
-        return this.currenciesList;
+        return {
+            currencies: this.currenciesList!,
+            sources: this.currenciesSources || []
+        };
     }
 
 }
