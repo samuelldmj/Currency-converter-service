@@ -6,7 +6,7 @@ import logger from "../Utils/logger.js";
 class RateAggregatorService {
 
     constructor(
-        private apiService: ExternalApiService,
+        public apiService: ExternalApiService,
         private cacheRepository: CacheRepository
     ) { }
 
