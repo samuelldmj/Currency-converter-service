@@ -207,9 +207,12 @@ GET /api/v1/currencies
 ```json
 {
   "success": true,
-  "data": ["AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", ...]
+  "data": ["AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", ...],
+  "sources": ["currencyapi", "fixer", "openexchange"]
 }
 ```
+
+The `sources` field indicates which APIs successfully provided currency data.
 
 ### 3. Rate History
 
@@ -236,7 +239,8 @@ GET /api/v1/rates/history/USD/EUR
       "from": "USD",
       "to": "EUR",
       "rate": 0.925,
-      "timestamp": "2025-01-15T10:30:00.000Z"
+      "timestamp": "2025-01-15T10:30:00.000Z",
+      "source": "currencyapi"
     }
   ]
 }
