@@ -51,22 +51,23 @@ export class CurrencyService {
 
     }
 
-    async getSupportedCurrencies(): Promise<string[]> {
+    async getSupportedCurrencies(): Promise<{currencies: string[], sources: string[]}> {
         const cached = this.cacheRepository.getCurrencies();
         if (cached) return cached;
 
-        const currencies = await this.rateAggregatorService.apiService.fetchAllCurrencies();
-        this.cacheRepository.setCurrencies(currencies);
-        return currencies;
+        const {currencies, sources} = await this.rateAggregatorService.apiService.fetchAllCurrencies();
+        this.cacheRepository.setCurrencies(currencies, sources);
+        return {currencies, sources};
     }
 
-    async getRateHistory(from: string, to: string): Promise<Array<{from: string, to: string, rate: number, timestamp: string}>> {
+    async getRateHistory(from: string, to: string): Promise<Array<{from: string, to: string, rate: number, timestamp: string, source?: string}>> {
         const rates = this.rateRepository.getLast24Hours(from.toUpperCase(), to.toUpperCase());
         return rates.map(r => ({
             from: r.base,
             to: r.target,
             rate: r.rate,
-            timestamp: r.timestamp || new Date().toISOString()
+            timestamp: r.timestamp || new Date().toISOString(),
+            source: r.source
         }));
     }
 }
