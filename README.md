@@ -257,6 +257,8 @@ GET /api/v1/rates/history/USD/EUR
 }
 ```
 
+If no rate history exists for a valid currency pair, returns 200 with an empty array. This is different from an invalid currency code, which returns a 400 error.
+
 ## Architecture
 
 ### Request Flow
