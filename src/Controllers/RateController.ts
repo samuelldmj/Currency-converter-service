@@ -14,6 +14,14 @@ class RateController {
         }
 
         try {
+            const {currencies} = await this.currencyService.getSupportedCurrencies();
+            const fromUpper = from.toUpperCase();
+            const toUpper = to.toUpperCase();
+            
+            if (!currencies.includes(fromUpper) || !currencies.includes(toUpper)) {
+                return next(new AppError(`Invalid currency code: ${!currencies.includes(fromUpper) ? fromUpper : ''} ${!currencies.includes(toUpper) ? toUpper : ''}`.trim(), 400));
+            }
+            
             const history = await this.currencyService.getRateHistory(from, to);
             res.json({ success: true, data: history });
         } catch (error) {
