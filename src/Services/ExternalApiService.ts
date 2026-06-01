@@ -95,7 +95,7 @@ class ExternalApiService {
         return Object.keys(data.data);
     }
 
-    async fetchAllCurrencies(): Promise<string[]> {
+    async fetchAllCurrencies(): Promise<{currencies: string[], sources: string[]}> {
         const results = await Promise.allSettled([
             this.fetchCurrenciesFromFixer(),
             this.fetchCurrenciesFromOpenExchange(),
@@ -103,13 +103,20 @@ class ExternalApiService {
         ]);
 
         const allCurrencies = new Set<string>();
-        results.forEach(result => {
-            if (result.status === 'fulfilled' && result.value) {
+        const successfulSources: string[] = [];
+        const sources = ["fixer", "openexchange", "currencyapi"] as const;
+        
+        results.forEach((result, index) => {
+            if (result.status === 'fulfilled' && result.value && result.value.length > 0) {
                 result.value.forEach(c => allCurrencies.add(c));
+                successfulSources.push(sources[index]);
             }
         });
 
-        return Array.from(allCurrencies).sort();
+        return {
+            currencies: Array.from(allCurrencies).sort(),
+            sources: successfulSources
+        };
     }
 
 
@@ -215,5 +222,17 @@ export default ExternalApiService;
     source: "openexchange"
   }
 ]
+
+
+
+
+// PSEUDOCODE for fetchAllCurrencies output:
+// [
+//   { status: "fulfilled", value: ["USD", "EUR", "GBP", ...] },
+//   { status: "fulfilled", value: ["USD", "EUR", "JPY", ...] },
+//   { status: "rejected", reason: Error("...") }
+// ]
+// After processing:
+// { currencies: ["AED", "AFN", "ALL", ...], sources: ["fixer", "currencyapi"] }
 
 */
