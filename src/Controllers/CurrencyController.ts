@@ -33,6 +33,11 @@ class CurrencyController {
         }
 
         try {
+            const {currencies} = await this.currencyService.getSupportedCurrencies();
+            if (!currencies.includes(from) || !currencies.includes(to)) {
+                return next(new AppError(`Invalid currency code: ${!currencies.includes(from) ? from : ''} ${!currencies.includes(to) ? to : ''}`.trim(), 400));
+            }
+            
             const result = await this.currencyService.convert(from, to, amount);
             res.json({ success: true, data: result });
         } catch (error) {
