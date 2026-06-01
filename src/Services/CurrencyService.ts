@@ -16,73 +16,52 @@ export class CurrencyService {
     
     async convert(from: string, to: string, amount: number): Promise<ConversionResult> {
         
-        //normalize currency codes(That is make it consistent).
         from = from.toUpperCase();
         to = to.toUpperCase();
         
-        // 1. Try cache first
         let rate = this.cacheRepository.get(from, to);
         let source = "cache";
 
-        // 2. If not in cache, try DB
         if (!rate) {
             rate = this.rateRepository.getLatest(from, to);
             if (rate) {
             source = "db";
         }
         }
-        // 3. If not in DB, fetch from API
         if (!rate) {
            rate =  await this.rateAggregatorService.getRate(from, to);
 
             if (rate) {
 
-                //persist to db
                 this.rateRepository.insert(rate);
             
-                //cache rate
                 this.cacheRepository.set(rate);
 
-                source = rate.source || 'api';
+                source = rate.source || 'aggregator';
             } else {
                   throw new AppError(
-            "Unable to fetch exchange rate",
-            503
-        );
+              "Unable to fetch exchange rate",
+              503
+          );
             }
             
         }
-        // 4. Calculate conversion
         const convertedAmount = amount * (rate?.rate || 0);
         return { from, to, amount, convertedAmount, rate: rate?.rate || 0, source, timestamp: new Date().toISOString() };
 
     }
+
+    async getSupportedCurrencies(): Promise<string[]> {
+        return ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY"];
+    }
+
+    async getRateHistory(from: string, to: string): Promise<Array<{from: string, to: string, rate: number, timestamp: string}>> {
+        const rates = this.rateRepository.getLast24Hours(from.toUpperCase(), to.toUpperCase());
+        return rates.map(r => ({
+            from: r.base,
+            to: r.target,
+            rate: r.rate,
+            timestamp: r.timestamp || new Date().toISOString()
+        }));
+    }
 }
-
-
-
-
-
-//PSUEDOCODE
-// IMPORT CacheRepository, RateRepository, RateAggregatorService, ExchangeRate, ConversionResult
-
-// DEFINE class CurrencyService
-//   constructor(private rateRepository, private cacheRepository, private rateAggregatorService) {}
-
-//   async convert(from, to, amount)
-//     NORMALIZE currency codes
-//     TRY cacheRepository.get(from, to)
-//       IF found -> source = "cache"
-//     ELSE
-//       TRY rateRepository.getLatest(from, to)
-//         IF found -> source = "db"
-//     IF still no rate
-//       CALL rateAggregatorService.getRate(from, to)
-//       IF rate found
-//         rateRepository.insert(rate)
-//         cacheRepository.set(rate)
-//         source = rate.source || "api"
-//       ELSE
-//         THROW error("Unable to fetch exchange rate")
-//     CALCULATE convertedAmount = amount * rate.rate
-//     RETURN ConversionResult object
