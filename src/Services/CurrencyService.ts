@@ -52,7 +52,12 @@ export class CurrencyService {
     }
 
     async getSupportedCurrencies(): Promise<string[]> {
-        return ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY"];
+        const cached = this.cacheRepository.getCurrencies();
+        if (cached) return cached;
+
+        const currencies = await this.rateAggregatorService.apiService.fetchAllCurrencies();
+        this.cacheRepository.setCurrencies(currencies);
+        return currencies;
     }
 
     async getRateHistory(from: string, to: string): Promise<Array<{from: string, to: string, rate: number, timestamp: string}>> {
