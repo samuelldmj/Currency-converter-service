@@ -194,6 +194,17 @@ The `rate` field in the response contains the current exchange rate.
 }
 ```
 
+Invalid currency codes return a 400 error:
+
+```json
+{
+  "success": false,
+  "error": "Invalid currency code: XXX YYY"
+}
+```
+
+The `sources` field in the currencies endpoint indicates which APIs successfully provided currency data. Some providers may fail or return partial results.
+
 ### 2. List Supported Currencies
 
 Returns the list of supported currency codes fetched from external APIs (CurrencyApi, Fixer, OpenExchange). Results are cached for 5 minutes.
