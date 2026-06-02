@@ -413,3 +413,25 @@ CREATE TABLE IF NOT EXISTS exchange_rates (
 ```
 
 The database file is stored at the path specified by `DB_PATH` (default: `data/currency.db` inside the container). A Docker named volume (`sqlite_data`) ensures data persists across container restarts.
+
+## System Design Concepts
+
+This project demonstrates several key system design patterns and concepts:
+
+### 1. Layered Architecture (Hexagonal/OOP)
+Separation of concerns through distinct layers: Controllers (HTTP), Services (business logic), Repositories (data access), and Models (types). This enables testability and maintainability.
+
+### 2. Cache-Aside Pattern with TTL
+Three-tier lookup strategy: in-memory LRU cache (5-min TTL) → SQLite database → External APIs. Cache entries are refreshed on DB miss, reducing external API calls while ensuring data freshness.
+
+### 3. Circuit Breaker & Fallback
+External API calls implement a fallback chain (CurrencyApi → Fixer → OpenExchange → stale cache). This ensures availability even when individual providers fail.
+
+### 4. Dependency Injection Container
+Centralized service management via a Container class enables loose coupling, easier testing, and explicit dependency declaration.
+
+### 5. Multi-Provider Aggregation
+Parallel/fallback strategies for external data sources improve reliability and data quality. The aggregator can compute average rates from multiple sources.
+
+### 6. Write-Through Caching
+Rates fetched from external APIs are persisted to both SQLite and cache simultaneously, ensuring consistency across storage layers.
