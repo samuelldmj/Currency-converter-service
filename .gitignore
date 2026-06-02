@@ -3,5 +3,4 @@ todo.md
 node_modules
 .amazonq
 .env.development.local
-docs
 dist
